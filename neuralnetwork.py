@@ -4,7 +4,13 @@ from math_helper import MathHelper
 
 
 class NeuralNetwork:
-    def __init__(self, input_layer_size, output_layer_size, hidden_layer_sizes, initial_thetas=None):
+    def __init__(self, lambda_val, input_layer_size, output_layer_size, hidden_layer_sizes, initial_thetas=None):
+        if lambda_val is None or (type(lambda_val) != float and type(lambda_val) != int):
+            raise TypeError("Lambda must be a numeric type.")
+
+        if lambda_val < 0.:
+            raise ValueError("Lambda must be a non-negative number.")
+
         if type(input_layer_size) != int or type(output_layer_size) != int:
             raise TypeError("Input and output layer sizes must be in int.")
 
@@ -17,6 +23,7 @@ class NeuralNetwork:
         if not all(isinstance(x, int) and x > 0 for x in hidden_layer_sizes):
             raise ValueError("All hidden layer sizes must be positive integer.")
 
+        self.lambda_val = lambda_val
         self.input_layer_size = input_layer_size
         self.output_layer_size = output_layer_size
         self.hidden_layer_sizes = list(hidden_layer_sizes)
@@ -26,12 +33,12 @@ class NeuralNetwork:
         self.helper = MathHelper()
 
     @classmethod
-    def init(cls, input_layer_size, output_layer_size, hidden_layer_sizes):
-        return cls(input_layer_size=input_layer_size, output_layer_size=output_layer_size,
+    def init(cls, lambda_val, input_layer_size, output_layer_size, hidden_layer_sizes):
+        return cls(lambda_val=lambda_val, input_layer_size=input_layer_size, output_layer_size=output_layer_size,
                    hidden_layer_sizes=hidden_layer_sizes, initial_thetas=None)
 
     @classmethod
-    def init_with_theta(cls, thetas):
+    def init_with_theta(cls, lambda_val, thetas):
         if len(thetas) < 3:
             raise ValueError("There must be at least one hidden layer and hence at least three weight matrices.")
 
@@ -48,7 +55,8 @@ class NeuralNetwork:
         hls = [_shape(t)[0] for t in thetas]
         ols = hls.pop()
 
-        return cls(input_layer_size=ils, output_layer_size=ols, hidden_layer_sizes=hls, initial_thetas=thetas)
+        return cls(lambda_val=lambda_val, input_layer_size=ils, output_layer_size=ols, hidden_layer_sizes=hls,
+                   initial_thetas=thetas)
 
     def _random_initialize_theta(self):
         delta = 0.12
