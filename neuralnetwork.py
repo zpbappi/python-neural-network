@@ -94,3 +94,26 @@ class NeuralNetwork:
 
         matrices.append(np.reshape(unrolled_vector[taken:], (self.output_layer_size, prev_layer_size+1)))
         return matrices
+
+    def _cost_regularization(self, current_thetas, train_data_size):
+        if self.lambda_val == 0:
+            return 0
+
+        def mapper(x):
+            matrix = np.zeros(x.shape)
+            matrix[:,1:] = x[:,1:]
+            return np.multiply(matrix, matrix).sum()
+
+        def reducer(x, y):
+            return x + y
+
+        return self.lambda_val * functools.reduce(reducer, map(mapper, current_thetas), 0) / (2. * train_data_size)
+
+    def _theta_regularization(self, theta, train_data_size):
+        result = np.zeros(theta.shape)
+
+        if self.lambda_val == 0:
+            return result
+
+        result[:, 1:] = (self.lambda_val / train_data_size) * theta[:, 1:]
+        return result
