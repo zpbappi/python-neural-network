@@ -1,5 +1,7 @@
 import numpy as np
 
+from math_helper import MathHelper
+
 
 class NeuralNetwork:
     def __init__(self, input_layer_size, output_layer_size, hidden_layer_sizes, initial_thetas=None):
@@ -21,6 +23,7 @@ class NeuralNetwork:
         self.hidden_layer_count = len(self.hidden_layer_sizes)
         self.thetas = self._random_initialize_theta() if initial_thetas is None else [np.asarray(t) for t in
                                                                                       initial_thetas]
+        self.helper = MathHelper()
 
     @classmethod
     def init(cls, input_layer_size, output_layer_size, hidden_layer_sizes):

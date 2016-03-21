@@ -75,3 +75,7 @@ class NNConstructionTest(unittest.TestCase):
             instance = NeuralNetwork.init_with_theta(thetas)
             mock_init.assert_called_once_with(input_layer_size=2, output_layer_size=1, hidden_layer_sizes=[3, 4],
                                               initial_thetas=thetas)
+
+    def test_math_helper_is_created(self):
+        nn = NeuralNetwork(100, 42, (1, 2, 3, 4))
+        self.assertIsNotNone(nn.helper)
