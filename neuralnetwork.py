@@ -1,4 +1,5 @@
 import numpy as np
+import functools
 
 from math_helper import MathHelper
 
@@ -39,7 +40,7 @@ class NeuralNetwork:
 
     @classmethod
     def init_with_theta(cls, lambda_val, thetas):
-        if len(thetas) < 3:
+        if len(thetas) < 2:
             raise ValueError("There must be at least one hidden layer and hence at least three weight matrices.")
 
         def _shape(item):
@@ -71,3 +72,25 @@ class NeuralNetwork:
         sizes = zip(paired_copy, first_size_array)
 
         return [random_matrix(r, c + 1) for (r, c) in sizes]
+
+    @staticmethod
+    def _unroll_matrices(matrices):
+        def map_fn(x):
+            return np.ravel(x).tolist()
+
+        def reduce_fn(x, y):
+            return x + y
+
+        return functools.reduce(reduce_fn, map(map_fn, matrices))
+
+    def _roll_into_matrices(self, unrolled_vector):
+        taken, prev_layer_size, current_layer_size = 0, self.input_layer_size, self.hidden_layer_sizes[0]
+        matrices = []
+        for i in range(self.hidden_layer_count):
+            current_layer_size = self.hidden_layer_sizes[i]
+            matrices.append(np.reshape(unrolled_vector[taken : taken + current_layer_size*(prev_layer_size+1)], (current_layer_size, prev_layer_size+1)))
+            taken += current_layer_size * (prev_layer_size + 1)
+            prev_layer_size = current_layer_size
+
+        matrices.append(np.reshape(unrolled_vector[taken:], (self.output_layer_size, prev_layer_size+1)))
+        return matrices
