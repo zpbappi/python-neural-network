@@ -30,7 +30,7 @@ class TrainingTests(unittest.TestCase):
         current_thetas = np.array([[[1,2,3], [4,5,6]], [[-1, -2, -3], [-4, -5, -6]]])
         actual = nn._cost_regularization(current_thetas, 100)
         expected = 0.074
-        self.assertAlmostEquals(actual, expected)
+        self.assertAlmostEqual(actual, expected)
 
     def test_theta_regularization_should_return_zero_for_no_lambda(self):
         nn = NeuralNetwork.init(0, 10, 2, [10, 10])

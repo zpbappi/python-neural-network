@@ -58,9 +58,9 @@ class NNConstructionTest(unittest.TestCase):
         nn = NeuralNetwork(0, 100, 10, (25, 50))
 
         self.assertEqual(len(nn.thetas), 3)
-        self.assertEquals(nn.thetas[0].shape, (25, 101))
-        self.assertEquals(nn.thetas[1].shape, (50, 26))
-        self.assertEquals(nn.thetas[2].shape, (10, 51))
+        self.assertEqual(nn.thetas[0].shape, (25, 101))
+        self.assertEqual(nn.thetas[1].shape, (50, 26))
+        self.assertEqual(nn.thetas[2].shape, (10, 51))
 
     def test_factory_class_method_with_sizes_calls_proper_ctor(self):
         mock_init = mock.Mock(return_value=None)
