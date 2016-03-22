@@ -75,13 +75,13 @@ class NeuralNetwork:
 
     @staticmethod
     def _unroll_matrices(matrices):
-        def map_fn(x):
+        def mapper(x):
             return np.ravel(x).tolist()
 
-        def reduce_fn(x, y):
+        def reducer(x, y):
             return x + y
 
-        return functools.reduce(reduce_fn, map(map_fn, matrices))
+        return functools.reduce(reducer, map(mapper, matrices))
 
     def _roll_into_matrices(self, unrolled_vector):
         taken, prev_layer_size, current_layer_size = 0, self.input_layer_size, self.hidden_layer_sizes[0]
