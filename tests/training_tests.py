@@ -45,3 +45,15 @@ class TrainingTests(unittest.TestCase):
         actual = nn._theta_regularization(theta, 100)
         expected = np.array([[0, 0.01, 0.015], [0, 0.025, 0.03]])
         np.testing.assert_array_equal(actual, expected)
+
+    def test_gradient_calculation_should_not_throw(self):
+        nn = NeuralNetwork.init(0.03, 5, 1, [10])
+        X = np.random.rand(10, 6)
+        X[:,0] = 1
+        Y = np.array([0, 1, 0, 1, 0, 1, 1, 1, 0, 1]);
+        unrolled_thetas = nn._unroll_matrices(nn.thetas)
+        result = nn._calculate_cost_gradient(unrolled_thetas, X, Y)
+
+        # no idea what the cost would be, but i expect it to be greater than zero
+        # it is extremely unlikely to have a perfect model in just one step with a single input & random initialization
+        self.assertGreaterEqual(result[0], 0.)

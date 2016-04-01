@@ -88,11 +88,12 @@ class NeuralNetwork:
         matrices = []
         for i in range(self.hidden_layer_count):
             current_layer_size = self.hidden_layer_sizes[i]
-            matrices.append(np.reshape(unrolled_vector[taken : taken + current_layer_size*(prev_layer_size+1)], (current_layer_size, prev_layer_size+1)))
+            matrices.append(np.reshape(unrolled_vector[taken: taken + current_layer_size * (prev_layer_size + 1)],
+                                       (current_layer_size, prev_layer_size + 1)))
             taken += current_layer_size * (prev_layer_size + 1)
             prev_layer_size = current_layer_size
 
-        matrices.append(np.reshape(unrolled_vector[taken:], (self.output_layer_size, prev_layer_size+1)))
+        matrices.append(np.reshape(unrolled_vector[taken:], (self.output_layer_size, prev_layer_size + 1)))
         return matrices
 
     def _cost_regularization(self, current_thetas, train_data_size):
@@ -101,7 +102,7 @@ class NeuralNetwork:
 
         def mapper(x):
             matrix = np.zeros(x.shape)
-            matrix[:,1:] = x[:,1:]
+            matrix[:, 1:] = x[:, 1:]
             return np.multiply(matrix, matrix).sum()
 
         def reducer(x, y):
@@ -117,3 +118,67 @@ class NeuralNetwork:
 
         result[:, 1:] = (self.lambda_val / train_data_size) * theta[:, 1:]
         return result
+
+    def _calculate_cost_gradient(self, unrolled_theta_vector, X, Y):
+        thetas = self._roll_into_matrices(unrolled_theta_vector)
+        theta_count = len(thetas)
+
+        def single_sample_mapper(pair):
+            x, y = pair
+            zs = []
+            activations = []
+            prev_activation = np.array([x])
+            for i in range(theta_count):
+                theta = np.array(thetas[i])
+                activations.append(prev_activation)
+                zt = np.dot(prev_activation, np.transpose(theta))
+                at = np.ones((zt.shape[0], zt.shape[1] + 1))
+                at[:, 1:] = self.helper.sigmoid(zt)
+                zs.append(zt)
+                prev_activation = at
+
+            zs.pop() # as the sigmoid grad of the last element is h(x) and we don't use the last z in back-propagation
+
+            ht = prev_activation[:, 1:].flatten()[0]
+            j_partial = 0
+            if y == 1:
+                j_partial = -np.log(ht)
+            elif y == 0:
+                j_partial = -np.log(1 - ht)
+            else:
+                raise ValueError(
+                    "Output value cannot be anything other than 0 and 1. If you want more than two level of output, try converting the out values into a vector of 0 and 1 only.")
+
+            deltas = []
+
+            prev_delta = np.transpose(ht - y)
+            deltas.append(prev_delta)
+
+            for i in range(1, theta_count):
+                zt = zs.pop()
+                z_prev = np.ones((zt.shape[1]+1, 1))
+                z_prev[1:,:] = np.transpose(zt)
+
+                delta = np.multiply(np.dot(np.transpose(thetas[-i]), prev_delta), self.helper.sigmoid_grad(z_prev))[1:,:]
+                deltas.append(delta)
+                prev_delta = delta
+
+            DELs = [np.dot(d, a) for (d,a) in zip(deltas[::-1], activations)]
+
+            return {'cost': j_partial, 'deltas' : DELs}
+
+
+        def sample_pair_reducer(x, y):
+            return {'cost': x['cost'] + y['cost'], 'deltas': [dx + dy for (dx,dy) in zip(x['deltas'], y['deltas'])]}
+
+        m, n = X.shape
+
+        result = functools.reduce(
+            sample_pair_reducer,
+            map(single_sample_mapper, zip(X, Y)),
+            {'cost': 0, 'deltas': [np.zeros(t.shape) for t in thetas]});
+
+        J = result["cost"]/m + self._cost_regularization(thetas, m)
+        gradients = [(d/m)-self._theta_regularization(t, m) for (d,t) in zip(result["deltas"], thetas)]
+
+        return (J, self._unroll_matrices(gradients))
