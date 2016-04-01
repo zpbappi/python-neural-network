@@ -55,5 +55,5 @@ class TrainingTests(unittest.TestCase):
         result = nn._calculate_cost_gradient(unrolled_thetas, X, Y)
 
         # no idea what the cost would be, but i expect it to be greater than zero
-        # it is extremely unlikely to have a perfect model in just one step with a single input & random initialization
+        # it is extremely unlikely to have a perfect model in just one step with random initialization
         self.assertGreaterEqual(result[0], 0.)
