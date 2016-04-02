@@ -9,8 +9,8 @@ class TrainingTests(unittest.TestCase):
     def test_unroll_theta_should_work_properly(self):
         thetas = np.asarray([[[1,2,3], [4,5,6]], [[-1, -2, -3], [-4, -5, -6]]])
         actual = NeuralNetwork._unroll_matrices(thetas)
-        expected = [1, 2, 3, 4, 5, 6, -1, -2, -3, -4, -5, -6]
-        self.assertEqual(actual, expected)
+        expected = np.array([1, 2, 3, 4, 5, 6, -1, -2, -3, -4, -5, -6])
+        np.testing.assert_array_equal(actual, expected)
 
     def test_roll_into_theta_should_work_properly(self):
         nn = NeuralNetwork.init(0, 2, 2, [2])
@@ -48,12 +48,24 @@ class TrainingTests(unittest.TestCase):
 
     def test_gradient_calculation_should_not_throw(self):
         nn = NeuralNetwork.init(0.03, 5, 1, [10])
-        X = np.random.rand(10, 6)
-        X[:,0] = 1
-        Y = np.array([0, 1, 0, 1, 0, 1, 1, 1, 0, 1]);
+        X = np.random.rand(10, 5)
+        Y = np.array([0, 1, 0, 1, 0, 1, 1, 1, 0, 1])
         unrolled_thetas = nn._unroll_matrices(nn.thetas)
         result = nn._calculate_cost_gradient(unrolled_thetas, X, Y)
 
         # no idea what the cost would be, but i expect it to be greater than zero
         # it is extremely unlikely to have a perfect model in just one step with random initialization
         self.assertGreaterEqual(result[0], 0.)
+
+    def test_train_should_not_throw(self):
+        nn = NeuralNetwork.init(0.03, 5, 1, [10])
+        X = np.random.rand(10, 5)
+        Y = np.array([0, 1, 0, 1, 0, 1, 1, 1, 0, 1])
+        result = nn.train(X, Y)
+
+    def test_any_output_other_than_zero_one_throws(self):
+        nn = NeuralNetwork.init(0.03, 5, 1, [10])
+        X = np.random.rand(10, 5)
+        Y = np.array([0, 1, 0, 1, 0, 1, 1, 2, 0, 1])
+        with self.assertRaises(ValueError):
+            nn.train(X, Y)

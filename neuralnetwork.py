@@ -1,5 +1,6 @@
 import numpy as np
 import functools
+import scipy.optimize as op
 
 from math_helper import MathHelper
 
@@ -81,7 +82,8 @@ class NeuralNetwork:
         def reducer(x, y):
             return x + y
 
-        return functools.reduce(reducer, map(mapper, matrices))
+        combined_list = functools.reduce(reducer, map(mapper, matrices))
+        return np.array(combined_list)
 
     def _roll_into_matrices(self, unrolled_vector):
         taken, prev_layer_size, current_layer_size = 0, self.input_layer_size, self.hidden_layer_sizes[0]
@@ -122,12 +124,14 @@ class NeuralNetwork:
     def _calculate_cost_gradient(self, unrolled_theta_vector, X, Y):
         thetas = self._roll_into_matrices(unrolled_theta_vector)
         theta_count = len(thetas)
+        m, n = X.shape
 
         def single_sample_mapper(pair):
             x, y = pair
             zs = []
             activations = []
-            prev_activation = np.array([x])
+            prev_activation = np.ones((1, n+1))
+            prev_activation[:,1:] = np.array([x])[:,:]
             for i in range(theta_count):
                 theta = np.array(thetas[i])
                 activations.append(prev_activation)
@@ -179,6 +183,18 @@ class NeuralNetwork:
             {'cost': 0, 'deltas': [np.zeros(t.shape) for t in thetas]});
 
         J = result["cost"]/m + self._cost_regularization(thetas, m)
-        gradients = [(d/m)-self._theta_regularization(t, m) for (d,t) in zip(result["deltas"], thetas)]
-
+        gradients = [(d/m)+self._theta_regularization(t, m) for (d,t) in zip(result["deltas"], thetas)]
         return (J, self._unroll_matrices(gradients))
+
+    def train(self, X, Y):
+        t = self._unroll_matrices(self.thetas)
+        res = op.minimize(
+            fun = self._calculate_cost_gradient,
+            x0 = t,
+            jac = True,
+            method = 'CG',
+            options = {'maxiter': 100},
+            args = (X, Y)
+        );
+
+        return res
