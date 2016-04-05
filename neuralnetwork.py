@@ -31,8 +31,8 @@ class NeuralNetwork:
         self.output_layer_size = output_layer_size
         self.hidden_layer_sizes = list(hidden_layer_sizes)
         self.hidden_layer_count = len(self.hidden_layer_sizes)
-        self.thetas = self._random_initialize_theta() if initial_thetas is None else [np.asarray(t) for t in
-                                                                                      initial_thetas]
+        self._initial_thetas = self._random_initialize_theta() if initial_thetas is None else [np.asarray(t) for t in
+                                                                                               initial_thetas]
         self.helper = MathHelper()
 
     @classmethod
@@ -188,7 +188,7 @@ class NeuralNetwork:
         return (J, self._unroll_matrices(gradients))
 
     def train(self, X, Y):
-        t = self._unroll_matrices(self.thetas)
+        t = self._unroll_matrices(self._initial_thetas)
         res = op.minimize(
             fun = self._calculate_cost_gradient,
             x0 = t,
