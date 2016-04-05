@@ -15,3 +15,8 @@ class ModelTests(unittest.TestCase):
             Model([np.random.rand(5,4)])
 
         successful_model = Model([np.random.rand(5,4), np.random.rand(2, 6)])
+
+    def test_thetas_should_have_proper_dimensions(self):
+        with self.assertRaises(ValueError):
+            Model([np.random.rand(5,4), np.random.rand(2, 5)])
+        successful_model = Model([np.random.rand(10, 5), np.random.rand(10, 11), np.random.rand(5, 11), np.random.rand(3, 6)])
