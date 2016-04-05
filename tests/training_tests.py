@@ -2,6 +2,7 @@ import unittest
 import numpy as np
 
 from neuralnetwork import NeuralNetwork
+from model import Model
 
 
 class TrainingTests(unittest.TestCase):
@@ -57,11 +58,12 @@ class TrainingTests(unittest.TestCase):
         # it is extremely unlikely to have a perfect model in just one step with random initialization
         self.assertGreaterEqual(result[0], 0.)
 
-    def test_train_should_not_throw(self):
+    def test_train_should_return_a_model(self):
         nn = NeuralNetwork.init(0.03, 5, 1, [10])
         X = np.random.rand(10, 5)
         Y = np.array([0, 1, 0, 1, 0, 1, 1, 1, 0, 1])
         result = nn.train(X, Y)
+        self.assertIsInstance(result, Model)
 
     def test_any_output_other_than_zero_one_throws(self):
         nn = NeuralNetwork.init(0.03, 5, 1, [10])

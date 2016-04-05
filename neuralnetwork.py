@@ -3,6 +3,7 @@ import functools
 import scipy.optimize as op
 
 from math_helper import MathHelper
+from model import Model
 
 
 class NeuralNetwork:
@@ -197,4 +198,4 @@ class NeuralNetwork:
             args = (X, Y)
         );
 
-        return res
+        return Model(self._roll_into_matrices(res.x))
