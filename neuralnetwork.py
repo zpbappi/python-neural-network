@@ -43,7 +43,7 @@ class NeuralNetwork:
     @classmethod
     def init_with_theta(cls, lambda_val, thetas):
         if len(thetas) < 2:
-            raise ValueError("There must be at least one hidden layer and hence at least three weight matrices.")
+            raise ValueError("There must be at least one hidden layer and hence at least two weight matrices.")
 
         def _shape(item):
             if hasattr(item, "shape"):
@@ -122,9 +122,11 @@ class NeuralNetwork:
         result[:, 1:] = (self.lambda_val / train_data_size) * theta[:, 1:]
         return result
 
-    def _calculate_cost_gradient(self, unrolled_theta_vector, X, Y):
+    def _calculate_cost_gradient(self, unrolled_theta_vector, X_in, Y_in):
         thetas = self._roll_into_matrices(unrolled_theta_vector)
         theta_count = len(thetas)
+        X = np.asarray(X_in)
+        Y = np.asarray(Y_in)
         m, n = X.shape
 
         def single_sample_mapper(pair):
@@ -175,8 +177,6 @@ class NeuralNetwork:
 
         def sample_pair_reducer(x, y):
             return {'cost': x['cost'] + y['cost'], 'deltas': [dx + dy for (dx,dy) in zip(x['deltas'], y['deltas'])]}
-
-        m, n = X.shape
 
         result = functools.reduce(
             sample_pair_reducer,
