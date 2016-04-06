@@ -11,7 +11,7 @@ class Model:
             return True
 
         if thetas is None or type(thetas) != list or len(thetas) < 2:
-            raise(ValueError("Thetas must be an array of at least 3 matrices."))
+            raise(ValueError("Thetas must be an array of at least 2 matrices."))
 
         if not has_valid_dimensions(thetas):
             raise(ValueError("Thetas should have dimensions like: (a,b), (b+1,c), (c+1,d)..."))
