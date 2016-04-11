@@ -23,13 +23,13 @@ class TrainingTests(unittest.TestCase):
     def test_cost_regularization_returns_zero_for_no_lambda(self):
         nn = NeuralNetwork.init(0, 10, 2, [10, 10])
         thetas = nn._initial_thetas
-        actual = nn._cost_regularization(thetas, 10)
+        actual = nn.cost_regularization(thetas, 10)
         self.assertEqual(actual, 0)
 
     def test_cost_regularization_should_return_proper_value(self):
         nn = NeuralNetwork.init(0.1, 2, 2, [2])
         current_thetas = np.array([[[1,2,3], [4,5,6]], [[-1, -2, -3], [-4, -5, -6]]])
-        actual = nn._cost_regularization(current_thetas, 100)
+        actual = nn.cost_regularization(current_thetas, 100)
         expected = 0.074
         self.assertAlmostEqual(actual, expected)
 

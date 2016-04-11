@@ -99,7 +99,7 @@ class NeuralNetwork:
         matrices.append(np.reshape(unrolled_vector[taken:], (self.output_layer_size, prev_layer_size + 1)))
         return matrices
 
-    def _cost_regularization(self, current_thetas, train_data_size):
+    def cost_regularization(self, current_thetas, train_data_size):
         if self.lambda_val == 0:
             return 0
 
@@ -183,7 +183,7 @@ class NeuralNetwork:
             map(single_sample_mapper, zip(X, Y)),
             {'cost': 0, 'deltas': [np.zeros(t.shape) for t in thetas]});
 
-        J = result["cost"]/m + self._cost_regularization(thetas, m)
+        J = result["cost"]/m + self.cost_regularization(thetas, m)
         gradients = [(d/m)+self._theta_regularization(t, m) for (d,t) in zip(result["deltas"], thetas)]
         return (J, self._unroll_matrices(gradients))
 
