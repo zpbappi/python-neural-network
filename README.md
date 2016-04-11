@@ -1,4 +1,4 @@
-# python-neural-network
+# python-neural-network [![Build Status](https://travis-ci.org/zpbappi/python-neural-network.svg?branch=master)](https://travis-ci.org/zpbappi/python-neural-network)
 A neural network implementation using python. 
 It supports variable size and number of hidden layers, 
 uses numpy and scipy to implement feed-forward and back-propagation effeciently.
