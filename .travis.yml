@@ -3,8 +3,7 @@ python:
 - 3.5
 
 install:
-- sudo apt-get install libblas-dev liblapack-dev libatlas-base-dev gfortran
-- pip install scipy
+- sudo apt-get install python-numpy python-scipy
 
 script:
 - python -m unittest discover -s "./tests/" -p "*.py"
