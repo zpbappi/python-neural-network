@@ -15,9 +15,7 @@ before_install:
 install:
  - conda create --yes -n test python=$TRAVIS_PYTHON_VERSION
  - source activate test
- - conda install --yes numpy=$NUMPY scipy=$SCIPY pip
- - pip install setuptools
- - python setup.py install
+ - conda install --yes numpy=$NUMPY scipy=$SCIPY
 
 script:
 - python -m unittest discover -v -s "./tests/" -p "*.py"
