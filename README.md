@@ -9,8 +9,6 @@ uses numpy and scipy to implement feed-forward and back-propagation effeciently.
 - [x] Binary classification (_0_ or _1_).
 - [x] Multiclass classification (_class 0_ to _class k-1_).
 - [x] Raw evaluation values for custom classification logic implementation.
-- [ ] Ability to register a callback method to be called 
-after processing every single input data row when training.
 - [ ] Separate utility to draw learning curves using the existing neural network.
 - [ ] Separate utility to automatically select optimal value of the regularization 
 parameter (lambda).
