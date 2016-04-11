@@ -29,7 +29,7 @@ any _NeuralNetwork_.
 ### Initializing neural network
 ```python
 nn = NeuralNetwork.init(
-    lambda_val = 0.03, # you know what lambda is, right? is is the regularization parameter.
+    lambda_val = 0.03, # you know what lambda is, right? it is the regularization parameter
     input_layer_size = 10, # number of features in each input row
     output_layer_size = 4, # number of output classes (use 1 for binary)
     hidden_layer_sizes = [30, 20] # array like structure, mentioning size of hidden layers
@@ -130,7 +130,7 @@ prediction = model.predict_multiclass_classification(X_in)
 I this case, the returned value in `prediction` is a matrix of size (`m` x `1`). Where,
 
 - `m` is the number of input data rows.
-- Each output will have an ineger value betwen `0` (inclusive) and `k-1` (inclusive), where 
+- Each output will have an integer value betwen `0` (inclusive) and `k-1` (inclusive), where 
 `k` is the number of classes the output has (or, the size of output layer) and is defintely > `2`.
 - The value in the output (between `0` and `k-1`) will indicate the predicted class of 
 the corresponding input data row.
