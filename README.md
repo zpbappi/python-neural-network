@@ -190,5 +190,5 @@ custom_indices = [1, 3, 4, 5, 9, 11, 17, 50, 100]
     x, error_train, error_cv = data_point
     # draw me a nice graph!
 ``` 
-_Note: You need to make sure that your custom indices does not go bellow zero and beyond 
+_Note: You need to make sure that your custom indices do not go bellow zero and beyond 
 the size of your trainig data, for obvious reasons._
