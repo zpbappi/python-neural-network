@@ -19,19 +19,19 @@ class Model:
         if not has_valid_dimensions(thetas):
             raise(ValueError("Thetas should have dimensions like: (a,b), (b+1,c), (c+1,d)..."))
 
-        self._thetas = thetas
+        self.thetas = thetas
         self._math_helper = MathHelper()
 
     def evaluate(self, X_in):
         X = np.asmatrix(X_in)
         m, n = X.shape
-        theta_0_cols = self._thetas[0].shape[1]
+        theta_0_cols = self.thetas[0].shape[1]
         if n+1 != theta_0_cols:
             raise(ValueError("Input has {0} features and expected theta_0 to have {1} columns, but found {2} columns in theta_0.".format(n, n+1, theta_0_cols)))
 
         activation = np.ones((m, n+1))
         activation[:,1:] = X[:,:]
-        for theta in self._thetas:
+        for theta in self.thetas:
             ZT = np.dot(activation, np.transpose(theta))
             Z_shape = ZT.shape
             AT = np.ones((Z_shape[0], Z_shape[1]+1))
