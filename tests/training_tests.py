@@ -68,6 +68,15 @@ class TrainingTests(unittest.TestCase):
     def test_any_output_other_than_zero_one_throws(self):
         nn = NeuralNetwork.init(0.03, 5, 1, [10])
         X = np.random.rand(10, 5)
-        Y = np.array([0, 1, 0, 1, 0, 1, 1, 2, 0, 1])
+        Y = np.matrix([[0, 1, 0, 1, 0, 1, 1, 2, 0, 1]])
         with self.assertRaises(ValueError):
             nn.train(X, Y)
+
+    def test_training_a_nn_multiple_times_keeps_the_initial_theta_unchanged(self):
+        nn = NeuralNetwork.init(0.03, 5, 3, [10])
+        expected = nn._initial_thetas[:]
+        X = np.random.rand(10, 5)
+        Y = np.asmatrix((np.random.rand(10,3) > 0.5).astype(int))
+        nn.train(X, Y)
+        nn.train(X, Y)
+        self.assertEqual(expected, nn._initial_thetas)

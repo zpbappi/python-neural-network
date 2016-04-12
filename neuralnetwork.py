@@ -128,6 +128,7 @@ class NeuralNetwork:
         X = np.asmatrix(X_in)
         Y = np.asmatrix(Y_in)
         m, n = X.shape
+        eps = np.finfo(float).eps
 
         def single_sample_mapper(pair):
             x, y = pair
@@ -151,8 +152,8 @@ class NeuralNetwork:
             ht = prev_activation[:, 1:]
 
             # for y==1 and y==0 items separately
-            j_partial = sum(-np.log(ht[y == 1]))
-            j_partial += sum(-np.log(1 - ht[y == 0]))
+            j_partial = sum(-np.log(ht[y == 1] + eps))
+            j_partial += sum(-np.log(1 + eps - ht[y == 0]))
 
             deltas = []
 
