@@ -191,4 +191,4 @@ custom_indices = [1, 3, 4, 5, 9, 11, 17, 50, 100]
     # draw me a nice graph!
 ``` 
 _Note: You need to make sure that your custom indices does not go bellow zero and beyond 
-the size of your trainig data, for obvious reasons. _
+the size of your trainig data, for obvious reasons._
