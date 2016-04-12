@@ -9,7 +9,7 @@ uses numpy and scipy to implement feed-forward and back-propagation effeciently.
 - [x] Binary classification (_0_ or _1_).
 - [x] Multiclass classification (_class 0_ to _class k-1_).
 - [x] Raw evaluation values for custom classification logic implementation.
-- [ ] Separate utility to draw learning curves using the existing neural network.
+- [x] Separate utility to draw learning curves using the existing neural network.
 - [ ] Separate utility to automatically select optimal value of the regularization 
 parameter (lambda).
 - [ ] Ability to register a callback method to facilitate gradient checking.
@@ -93,6 +93,7 @@ For __binary classification__, you are expected to have an output layer size one
 a single column in your output data when you were training the model. When you use the trained
 model to predict, you will have similar single column output with values either `0` or `1`
 for each input data. This is how you use the model for binary classification:
+
 ```python
 # initialize neural network
 nn = NeuralNetwork.init(0.03, 10, 4, [30, 20])
@@ -151,3 +152,43 @@ the same meaning as before. In this case, the values in this matrix are real num
 `0` and `1`. One way to interpret these values woule be:
 > The value in the `i`th row's `j`th cell of the returned matrix
 is the probability of `i`th input data row's being in output class `j`.
+
+### Drawing learning curve
+
+There is an utility in this repository, named _learningcurve.py_, to help you draw the learning curve.
+The learning curve utility can be initialized as:
+
+```python
+lc = LearningCurve(
+    0, # lambda 
+    [5], # hidden layer sizes
+    np.random.rand(10, 5), # X_train 
+    np.random.rand(10, 1), # Y_train
+    np.random.rand(2, 5), # X_cv or cross validation input
+    np.random.rand(2, 1) # Y_cv or cross validation output
+)
+```
+
+Once initialized, you can generate data points that can be used to draw learning curve.
+Here is a skeleton code:
+```python
+for data_point in lc.generate():
+    x, error_train, error_cv = data_point
+    # using the data above, keep drawing the graph
+```
+
+However, with massive amount of data, this process will take huge time to complete.
+In that case, you may not want to draw all the points starting from `x=1` up to
+`x = <number of data rows you have>`. You may want to skip some data points 
+by supplying your _custom indices_. Here is how you do that:
+```python
+custom_indices = [1, 3, 4, 5, 9, 11, 17, 50, 100]
+# or
+# custom_indices = range(1, 1000, 5)
+
+ for data_point in lc.generate(custom_indices):
+    x, error_train, error_cv = data_point
+    # draw me a nice graph!
+``` 
+_Note: You need to make sure that your custom indices does not go bellow zero and beyond 
+the size of your trainig data, for obvious reasons. _
