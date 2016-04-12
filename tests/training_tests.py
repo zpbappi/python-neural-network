@@ -50,7 +50,7 @@ class TrainingTests(unittest.TestCase):
     def test_gradient_calculation_should_not_throw(self):
         nn = NeuralNetwork.init(0.03, 5, 1, [10])
         X = np.random.rand(10, 5)
-        Y = np.array([0, 1, 0, 1, 0, 1, 1, 1, 0, 1])
+        Y = np.matrix([[0, 1, 0, 1, 0, 1, 1, 1, 0, 1]]).T
         unrolled_thetas = nn._unroll_matrices(nn._initial_thetas)
         result = nn._calculate_cost_gradient(unrolled_thetas, X, Y)
 
@@ -59,9 +59,9 @@ class TrainingTests(unittest.TestCase):
         self.assertGreaterEqual(result[0], 0.)
 
     def test_train_should_return_a_model(self):
-        nn = NeuralNetwork.init(0.03, 5, 1, [10])
+        nn = NeuralNetwork.init(0.03, 5, 3, [10])
         X = np.random.rand(10, 5)
-        Y = np.array([0, 1, 0, 1, 0, 1, 1, 1, 0, 1])
+        Y = np.asmatrix((np.random.rand(10,3) > 0.5).astype(int))
         result = nn.train(X, Y)
         self.assertIsInstance(result, Model)
 

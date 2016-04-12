@@ -125,18 +125,21 @@ class NeuralNetwork:
     def _calculate_cost_gradient(self, unrolled_theta_vector, X_in, Y_in):
         thetas = self._roll_into_matrices(unrolled_theta_vector)
         theta_count = len(thetas)
-        X = np.asarray(X_in)
-        Y = np.asarray(Y_in)
+        X = np.asmatrix(X_in)
+        Y = np.asmatrix(Y_in)
         m, n = X.shape
 
         def single_sample_mapper(pair):
             x, y = pair
+            if np.any((y != 0)  & (y != 1)):
+                raise ValueError(
+                    "Output value cannot be anything other than 0 and 1. If you want more than two level of output, try converting the out values into a vector of 0 and 1 only.")
             zs = []
             activations = []
             prev_activation = np.ones((1, n+1))
-            prev_activation[:,1:] = np.array([x])[:,:]
+            prev_activation[:,1:] = np.asmatrix(x)[:,:]
             for i in range(theta_count):
-                theta = np.array(thetas[i])
+                theta = np.asmatrix(thetas[i])
                 activations.append(prev_activation)
                 zt = np.dot(prev_activation, np.transpose(theta))
                 at = np.ones((zt.shape[0], zt.shape[1] + 1))
@@ -145,16 +148,11 @@ class NeuralNetwork:
                 prev_activation = at
 
             zs.pop() # as the sigmoid grad of the last element is h(x) and we don't use the last z in back-propagation
+            ht = prev_activation[:, 1:]
 
-            ht = prev_activation[:, 1:].flatten()[0]
-            j_partial = 0
-            if y == 1:
-                j_partial = -np.log(ht)
-            elif y == 0:
-                j_partial = -np.log(1 - ht)
-            else:
-                raise ValueError(
-                    "Output value cannot be anything other than 0 and 1. If you want more than two level of output, try converting the out values into a vector of 0 and 1 only.")
+            # for y==1 and y==0 items separately
+            j_partial = sum(-np.log(ht[y == 1]))
+            j_partial += sum(-np.log(1 - ht[y == 0]))
 
             deltas = []
 
@@ -188,6 +186,8 @@ class NeuralNetwork:
         return (J, self._unroll_matrices(gradients))
 
     def train(self, X, Y):
+        if X.shape[0] != Y.shape[0]:
+            raise(ValueError("X and Y must have same number of rows."))
         t = self._unroll_matrices(self._initial_thetas)
         res = op.minimize(
             fun = self._calculate_cost_gradient,
