@@ -135,7 +135,7 @@ class NeuralNetwork:
             if np.any((y != 0)  & (y != 1)):
                 raise ValueError(
                     "Output value cannot be anything other than 0 and 1. If you want more than two level of output, try converting the out values into a vector of 0 and 1 only.")
-            zs = []
+
             activations = []
             prev_activation = np.ones((1, n+1))
             prev_activation[:,1:] = np.asmatrix(x)[:,:]
@@ -145,10 +145,8 @@ class NeuralNetwork:
                 zt = np.dot(prev_activation, np.transpose(theta))
                 at = np.ones((zt.shape[0], zt.shape[1] + 1))
                 at[:, 1:] = self.helper.sigmoid(zt)
-                zs.append(zt)
                 prev_activation = at
 
-            zs.pop() # as the sigmoid grad of the last element is h(x) and we don't use the last z in back-propagation
             ht = prev_activation[:, 1:]
 
             # for y==1 and y==0 items separately
@@ -161,11 +159,9 @@ class NeuralNetwork:
             deltas.append(prev_delta)
 
             for i in range(1, theta_count):
-                zt = zs.pop()
-                z_prev = np.ones((zt.shape[1]+1, 1))
-                z_prev[1:,:] = np.transpose(zt)
+                a = np.transpose(activations[-i])
 
-                delta = np.multiply(np.dot(np.transpose(thetas[-i]), prev_delta), self.helper.sigmoid_grad(z_prev))[1:,:]
+                delta = np.multiply(np.dot(np.transpose(thetas[-i]), prev_delta), np.multiply(a, 1 - a))[1:,:]
                 deltas.append(delta)
                 prev_delta = delta
 
@@ -183,7 +179,9 @@ class NeuralNetwork:
             {'cost': 0, 'deltas': [np.zeros(t.shape) for t in thetas]});
 
         J = result["cost"]/m + self.cost_regularization(thetas, m)
+
         gradients = [(d/m)+self._theta_regularization(t, m) for (d,t) in zip(result["deltas"], thetas)]
+
         return (J, self._unroll_matrices(gradients))
 
     def train(self, X, Y):
