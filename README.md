@@ -11,7 +11,7 @@ uses numpy and scipy to implement feed-forward and back-propagation effeciently.
 - [x] Raw evaluation values for custom classification logic implementation.
 - [x] Separate utility to draw learning curves using the existing neural network.
 - [ ] Choice of high performance calculation (read- faster training) using Numba.
-- [ ] GPU acceleration for even higher performance using Numba (depending on hardware support)
+- [ ] Choice of GPU acceleration for even higher performance using CUDA (depending on hardware support).
 - [ ] Separate utility to automatically select optimal value of the regularization 
 parameter (lambda).
 - [ ] Ability to register a callback method to facilitate gradient checking.
