@@ -128,7 +128,7 @@ class NeuralNetwork:
         X = np.asmatrix(X_in)
         Y = np.asmatrix(Y_in)
         m, n = X.shape
-        eps = np.finfo(float).eps
+        eps = 0.#np.finfo(float).eps
 
         def single_sample_mapper(pair):
             x, y = pair
@@ -184,7 +184,7 @@ class NeuralNetwork:
 
         return (J, self._unroll_matrices(gradients))
 
-    def train(self, X, Y):
+    def train(self, X, Y, maxiter = 200, tolerance = 1e-5):
         if X.shape[0] != Y.shape[0]:
             raise(ValueError("X and Y must have same number of rows."))
         t = self._unroll_matrices(self._initial_thetas)
@@ -192,8 +192,9 @@ class NeuralNetwork:
             fun = self._calculate_cost_gradient,
             x0 = t,
             jac = True,
+            tol = tolerance,
             method = 'CG',
-            options = {'maxiter': 100},
+            options = {'maxiter': maxiter},
             args = (X, Y)
         );
 

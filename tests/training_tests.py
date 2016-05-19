@@ -80,3 +80,21 @@ class TrainingTests(unittest.TestCase):
         nn.train(X, Y)
         nn.train(X, Y)
         self.assertEqual(expected, nn._initial_thetas)
+
+    @unittest.skip('Learning XOR is more difficult than it seems. Will deal with it as a separate problem.')
+    def test_training_for_XOR_learns(self):
+        nn = NeuralNetwork.init(0, 2, 1, [2])
+        X = np.matrix([[0, 0], [0, 1], [1, 0], [1, 1]])
+        Y = np.matrix([[0], [1], [1], [0]])
+        model = nn.train(X, Y, maxiter=400, tolerance=np.finfo(float).eps)
+        prediction = model.predict_binary_classification(X)
+        np.testing.assert_array_equal(prediction, Y)
+
+    def test_spoon_feeding_theta_should_work_when_learning_XNOR(self):
+        thetas = [np.matrix([[-7, 5, 5], [5, -10, -10]]), np.matrix([[-5, 10, 10]])]
+        nn = NeuralNetwork.init_with_theta(0, thetas)
+        X = np.matrix([[0, 0], [0, 1], [1, 0], [1, 1]])
+        Y = np.matrix([[1], [0], [0], [1]])
+        model = nn.train(X, Y)
+        prediction = model.predict_binary_classification(X)
+        np.testing.assert_array_equal(prediction, Y)
